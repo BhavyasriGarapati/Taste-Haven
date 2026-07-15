@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: taste-haven
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn taste_haven_project.wsgi:application"
