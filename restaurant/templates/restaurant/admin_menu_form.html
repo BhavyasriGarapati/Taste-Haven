@@ -1,0 +1,119 @@
+{% extends 'restaurant/base.html' %}
+{% load static %}
+
+{% block title %}Taste Haven | {{ title }}{% endblock %}
+
+{% block content %}
+<section class="booking-section section-padding bg-darker" style="margin-top: 60px;">
+    <div class="container" style="max-width: 700px;">
+        
+        <div class="booking-form-box" style="background-color: var(--bg-card); border: 1px solid var(--color-border); border-radius: 12px; padding: 40px; box-shadow: var(--shadow-premium);">
+            
+            <h2 class="form-box-title" style="font-size: 2rem; color: #fff; margin-bottom: 5px;">{{ title }}</h2>
+            <p class="form-box-subtitle" style="color: var(--color-text-muted); margin-bottom: 30px;">Fill out the dish information. Changes will reflect instantly on the client menu.</p>
+            
+            <form method="POST" enctype="multipart/form-data" class="main-booking-form">
+                {% csrf_token %}
+                
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="form-label" for="id_name">Food Name <span class="required-star">*</span></label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="error-feedback" style="color: #e57373; font-size: 0.8rem; margin-top: 5px;">{{ form.name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="form-label" for="id_description">Short Description <span class="required-star">*</span></label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div class="error-feedback" style="color: #e57373; font-size: 0.8rem; margin-top: 5px;">{{ form.description.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row grid-two-cols" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label class="form-label" for="id_price">Base Price (₹) <span class="required-star">*</span></label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                            <div class="error-feedback" style="color: #e57373; font-size: 0.8rem; margin-top: 5px;">{{ form.price.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="id_category">Category <span class="required-star">*</span></label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                            <div class="error-feedback" style="color: #e57373; font-size: 0.8rem; margin-top: 5px;">{{ form.category.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row grid-two-cols" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label class="form-label" for="id_image">Upload Local Image</label>
+                        {{ form.image }}
+                        {% if form.image.errors %}
+                            <div class="error-feedback" style="color: #e57373; font-size: 0.8rem; margin-top: 5px;">{{ form.image.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="id_image_url">Web Image URL (Fallback)</label>
+                        {{ form.image_url }}
+                        {% if form.image_url.errors %}
+                            <div class="error-feedback" style="color: #e57373; font-size: 0.8rem; margin-top: 5px;">{{ form.image_url.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row grid-two-cols" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label class="form-label" for="id_discount_percentage">Discount Percentage (%)</label>
+                        {{ form.discount_percentage }}
+                        {% if form.discount_percentage.errors %}
+                            <div class="error-feedback" style="color: #e57373; font-size: 0.8rem; margin-top: 5px;">{{ form.discount_percentage.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; justify-content: center; padding-top: 20px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            {{ form.is_available }}
+                            <label for="id_is_available" style="font-size: 0.9rem; color: #fff; cursor: pointer;">Mark Available for Ordering</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            {{ form.is_veg }}
+                            <label for="id_is_veg" style="font-size: 0.9rem; color: #fff; cursor: pointer;">Is Vegetarian Dish</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="background-color: rgba(255,255,255,0.02); border: 1px solid var(--color-border); padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                    <label class="form-label" style="margin-bottom: 10px; font-weight: 600;">Dishes Badges & Features</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            {{ form.is_special }}
+                            <label for="id_is_special" style="font-size: 0.85rem; color: var(--color-text-muted); cursor: pointer;">Chef's Special (Spotlight)</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            {{ form.is_popular }}
+                            <label for="id_is_popular" style="font-size: 0.85rem; color: var(--color-text-muted); cursor: pointer;">Popular Item (Best Seller)</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            {{ form.is_chef_recommendation }}
+                            <label for="id_is_chef_recommendation" style="font-size: 0.85rem; color: var(--color-text-muted); cursor: pointer;">Chef Recommendation</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            {{ form.is_new_arrival }}
+                            <label for="id_is_new_arrival" style="font-size: 0.85rem; color: var(--color-text-muted); cursor: pointer;">New Arrival</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
+                    <a href="{% url 'admin_menu_list' %}" class="btn btn-secondary" style="flex: 1; text-align: center;">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,318 @@
+{% extends 'restaurant/base.html' %}
+{% load static %}
+
+{% block title %}Taste Haven | Gourmet Culinary Menu{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium style system for Menu Cards & Filters */
+    .menu-search-filter-bar {
+        background-color: var(--bg-card);
+        border: 1px solid var(--color-border);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .filter-group-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .veg-nonveg-pills {
+        display: flex;
+        gap: 10px;
+    }
+    .pill-btn {
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid var(--color-border);
+        background-color: rgba(255,255,255,0.02);
+        color: var(--color-text-muted);
+        transition: var(--transition-smooth);
+    }
+    .pill-btn.active.veg {
+        background-color: rgba(76, 175, 80, 0.15);
+        color: #81c784;
+        border-color: #4caf50;
+    }
+    .pill-btn.active.nonveg {
+        background-color: rgba(244, 67, 54, 0.15);
+        color: #e57373;
+        border-color: #f44336;
+    }
+    .pill-btn.active.all {
+        background-color: var(--color-gold-trans);
+        color: var(--color-gold);
+        border-color: var(--color-gold);
+    }
+    .veg-indicator {
+        display: inline-flex;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #4caf50;
+        padding: 2px;
+        justify-content: center;
+        align-items: center;
+        margin-right: 5px;
+    }
+    .veg-indicator::after {
+        content: '';
+        display: block;
+        width: 6px;
+        height: 6px;
+        background-color: #4caf50;
+        border-radius: 50%;
+    }
+    .nonveg-indicator {
+        display: inline-flex;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #f44336;
+        padding: 2px;
+        justify-content: center;
+        align-items: center;
+        margin-right: 5px;
+    }
+    .nonveg-indicator::after {
+        content: '';
+        display: block;
+        width: 6px;
+        height: 6px;
+        background-color: #f44336;
+        border-radius: 50%;
+    }
+    .menu-card-img-box {
+        position: relative;
+        overflow: hidden;
+    }
+    .menu-card-img {
+        transition: transform 0.6s ease;
+    }
+    .menu-card:hover .menu-card-img {
+        transform: scale(1.1);
+    }
+    
+    /* Food Quotes Carousel Footer */
+    .quotes-section {
+        background: linear-gradient(rgba(28, 18, 12, 0.9), rgba(28, 18, 12, 0.9)), 
+                    url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
+        border-top: 1.5px solid var(--color-gold);
+        padding: 80px 0;
+        text-align: center;
+    }
+    .quotes-carousel {
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+        height: 120px;
+    }
+    .quote-slide {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        opacity: 0;
+        transition: opacity 0.8s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .quote-slide.active {
+        opacity: 1;
+        z-index: 10;
+    }
+    .quote-text {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-style: italic;
+        color: #fff;
+        line-height: 1.4;
+        margin-bottom: 10px;
+    }
+    .quote-author {
+        color: var(--color-gold);
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header menu-header">
+    <div class="header-overlay"></div>
+    <div class="container header-content text-center">
+        <span class="header-subtitle">ROYAL FLAVORS</span>
+        <h1 class="header-title">Our Exquisite Menu</h1>
+        <p class="header-desc">From sizzling clay ovens to slow-simmered Mughal gravies. Taste the royal heritage of India.</p>
+    </div>
+</section>
+
+<!-- Menu Filtering Section -->
+<section class="menu-section section-padding">
+    <div class="container">
+        
+        <!-- Live Search, Veg Filter, and Sort Bar -->
+        <div class="menu-search-filter-bar">
+            <!-- Row 1: Search -->
+            <form method="GET" action="{% url 'menu' %}" style="display: flex; gap: 15px; width: 100%;">
+                <input type="hidden" name="category" value="{{ selected_category }}">
+                <input type="hidden" name="type" value="{{ food_type }}">
+                <input type="hidden" name="sort" value="{{ sort_price }}">
+                <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search delicious Indian dishes..." style="flex-grow: 1;">
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i> Search</button>
+            </form>
+            
+            <!-- Row 2: Type Filters and Sorting -->
+            <div class="filter-group-row">
+                <!-- Veg/Non-veg filtering -->
+                <div class="veg-nonveg-pills">
+                    <a href="{% url 'menu' %}?category={{ selected_category }}&type=all&q={{ q }}&sort={{ sort_price }}" class="pill-btn {% if food_type == 'all' %}active all{% endif %}">Show All</a>
+                    <a href="{% url 'menu' %}?category={{ selected_category }}&type=veg&q={{ q }}&sort={{ sort_price }}" class="pill-btn {% if food_type == 'veg' %}active veg{% endif %}"><span class="veg-indicator"></span> Vegetarian</a>
+                    <a href="{% url 'menu' %}?category={{ selected_category }}&type=nonveg&q={{ q }}&sort={{ sort_price }}" class="pill-btn {% if food_type == 'nonveg' %}active nonveg{% endif %}"><span class="nonveg-indicator"></span> Non-Vegetarian</a>
+                </div>
+                
+                <!-- Price sorting dropdown -->
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label class="form-label" style="margin: 0; white-space: nowrap;">Sort By Price:</label>
+                    <select class="form-control" style="width: 180px;" onchange="location = this.value;">
+                        <option value="{% url 'menu' %}?category={{ selected_category }}&type={{ food_type }}&q={{ q }}&sort=" {% if not sort_price %}selected{% endif %}>Default</option>
+                        <option value="{% url 'menu' %}?category={{ selected_category }}&type={{ food_type }}&q={{ q }}&sort=asc" {% if sort_price == 'asc' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="{% url 'menu' %}?category={{ selected_category }}&type={{ food_type }}&q={{ q }}&sort=desc" {% if sort_price == 'desc' %}selected{% endif %}>Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="category-filters" style="margin-bottom: 50px;">
+            <a href="{% url 'menu' %}?category=all&type={{ food_type }}&q={{ q }}&sort={{ sort_price }}" class="filter-btn {% if selected_category == 'all' %}active{% endif %}">
+                All Dishes
+            </a>
+            {% for category in categories %}
+            <a href="{% url 'menu' %}?category={{ category.slug }}&type={{ food_type }}&q={{ q }}&sort={{ sort_price }}" class="filter-btn {% if selected_category == category.slug %}active{% endif %}">
+                {{ category.name }}
+            </a>
+            {% endfor %}
+        </div>
+        
+        <!-- Menu Grid -->
+        <div class="menu-grid">
+            {% for item in items %}
+            <div class="menu-card {% if not item.is_available %}out-of-stock-card{% endif %}" style="background-color: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--color-border); display: flex; height: 190px; transition: var(--transition-smooth); box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                <div class="menu-card-img-box" style="width: 190px; min-width: 190px; height: 100%;">
+                    <img src="{{ item.get_image_url }}" alt="{{ item.name }}" class="menu-card-img" style="width:100%; height:100%; object-fit:cover;">
+                    
+                    <!-- Badges -->
+                    {% if not item.is_available %}
+                        <span class="sold-out-badge" style="position: absolute; top: 10px; left: 10px; background-color: #c62828; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">Sold Out</span>
+                    {% elif item.discount_percentage > 0 %}
+                        <span class="card-badge" style="position: absolute; top: 10px; left: 10px; background-color: #e57373; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">{{ item.discount_percentage }}% Off</span>
+                    {% elif item.is_special %}
+                        <span class="card-badge" style="position: absolute; top: 10px; left: 10px; background-color: var(--color-gold); color: #121212; padding: 3px 8px; border-radius: 3px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">Chef Special</span>
+                    {% elif item.is_popular %}
+                        <span class="card-badge" style="position: absolute; top: 10px; left: 10px; background-color: #4fc3f7; color: #121212; padding: 3px 8px; border-radius: 3px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">Bestseller</span>
+                    {% elif item.is_new_arrival %}
+                        <span class="card-badge" style="position: absolute; top: 10px; left: 10px; background-color: #81c784; color: #121212; padding: 3px 8px; border-radius: 3px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">New</span>
+                    {% endif %}
+                </div>
+                <div class="menu-card-body" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1;">
+                    <div class="menu-card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h3 class="menu-card-title" style="font-size: 1.2rem; color: #fff; margin: 0;">
+                                {% if item.is_veg %}
+                                    <span class="veg-indicator"></span>
+                                {% else %}
+                                    <span class="nonveg-indicator"></span>
+                                {% endif %}
+                                {{ item.name }}
+                            </h3>
+                            <p class="menu-card-desc" style="color: var(--color-text-muted); font-size: 0.85rem; margin: 5px 0 0 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{ item.description }}</p>
+                        </div>
+                        <div style="text-align: right;">
+                            {% if item.discount_percentage > 0 %}
+                                <span class="menu-card-price" style="color: var(--color-gold); font-weight: 700; font-size: 1.15rem;">₹{{ item.final_price }}</span>
+                                <span style="text-decoration: line-through; color: var(--color-text-muted); font-size: 0.85rem; display: block;">₹{{ item.price }}</span>
+                            {% else %}
+                                <span class="menu-card-price" style="color: var(--color-gold); font-weight: 700; font-size: 1.15rem;">₹{{ item.price }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="menu-card-footer" style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; font-size: 0.8rem;">
+                        <span class="category-tag" style="color: var(--color-gold);"><i class="fa-solid fa-tag"></i> {{ item.category.name }}</span>
+                        {% if item.is_available %}
+                            <a href="{% url 'book_table' %}" class="availability text-success" style="font-weight: 600;"><i class="fa-solid fa-cart-plus"></i> Pre-Order Now</a>
+                        {% else %}
+                            <span class="availability text-danger" style="font-weight: 600;"><i class="fa-solid fa-circle-xmark"></i> Currently Not Available</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <p class="text-muted text-center" style="grid-column: span 2; padding: 40px 0;">No dishes found matching the filter criteria.</p>
+            {% endfor %}
+        </div>
+        
+    </div>
+</section>
+
+<!-- Food Quotes Animated Footer Section (Replaces default information footer on Menu page) -->
+<section class="quotes-section">
+    <div class="container">
+        <h3 style="color: var(--color-gold); text-transform: uppercase; letter-spacing: 4px; font-size: 1rem; margin-bottom: 20px;">Culinary Philosophy</h3>
+        <div class="quotes-carousel" id="philosophical-quotes-container">
+            <div class="quote-slide active">
+                <p class="quote-text">"Good food is the foundation of genuine happiness."</p>
+                <span class="quote-author">— Auguste Escoffier</span>
+            </div>
+            <div class="quote-slide">
+                <p class="quote-text">"People who love to eat are always the best people."</p>
+                <span class="quote-author">— Julia Child</span>
+            </div>
+            <div class="quote-slide">
+                <p class="quote-text">"Food is not just eating. It is an experience."</p>
+                <span class="quote-author">— Guy Fieri</span>
+            </div>
+            <div class="quote-slide">
+                <p class="quote-text">"Happiness is homemade and served fresh."</p>
+                <span class="quote-author">— Taste Haven Kitchen</span>
+            </div>
+            <div class="quote-slide">
+                <p class="quote-text">"Eat well. Feel well. Live well."</p>
+                <span class="quote-author">— Traditional Proverb</span>
+            </div>
+            <div class="quote-slide">
+                <p class="quote-text">"Every meal creates beautiful memories."</p>
+                <span class="quote-author">— Chef Richard Vane</span>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Simple Quotes slideshow timer
+    const slides = document.querySelectorAll('.quote-slide');
+    let currentSlide = 0;
+
+    if (slides.length > 0) {
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 5000); // Transitions slide every 5 seconds
+    }
+});
+</script>
+{% endblock %}

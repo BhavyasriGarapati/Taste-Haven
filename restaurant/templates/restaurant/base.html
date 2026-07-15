@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Taste Haven | Premium Dining & Reservation{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{% static 'restaurant/css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="main-header">
+        <div class="container navbar-container">
+            <a href="{% url 'home' %}" class="logo">
+                <span class="logo-gold">Taste</span> Haven
+            </a>
+            <nav class="navbar">
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="{% url 'menu' %}" class="nav-link">Menu</a></li>
+                    <li class="nav-item"><a href="{% url 'book_table' %}" class="nav-link nav-btn">Book A Table</a></li>
+                    {% if user.is_authenticated and user.is_staff %}
+                        <li class="nav-item"><a href="{% url 'admin_dashboard' %}" class="nav-link text-muted"><i class="fa-solid fa-chart-line"></i> Admin Dashboard</a></li>
+                        <li class="nav-item"><a href="{% url 'admin_menu_list' %}" class="nav-link text-muted"><i class="fa-solid fa-tasks"></i> Menu Management</a></li>
+                        <li class="nav-item"><a href="{% url 'admin_logout' %}" class="nav-link text-muted"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
+                    {% else %}
+                        <li class="nav-item"><a href="{% url 'dashboard' %}" class="nav-link text-muted"><i class="fa-solid fa-clipboard-list"></i> Staff Dashboard</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Messages Banner -->
+    {% if messages %}
+    <div class="container messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% else %}fa-circle-exclamation{% endif %}"></i>
+            <span>{{ message }}</span>
+            <button class="close-alert" onclick="this.parentElement.style.display='none';">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content Area -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer Area -->
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-col brand-col">
+                <a href="{% url 'home' %}" class="logo footer-logo">
+                    <span class="logo-gold">Taste</span> Haven
+                </a>
+                <p class="footer-desc">Experience culinary art and premium hospitality at Taste Haven. Handcrafted recipes, organic ingredients, and an unforgettable ambiance await you.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h3 class="footer-title">Opening Hours</h3>
+                <ul class="hours-list">
+                    <li><span class="day">Monday - Friday:</span> <span class="time">12:00 PM - 10:00 PM</span></li>
+                    <li><span class="day">Saturday:</span> <span class="time">11:00 AM - 11:00 PM</span></li>
+                    <li><span class="day">Sunday:</span> <span class="time">11:00 AM - 9:00 PM</span></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3 class="footer-title">Contact & Location</h3>
+                <p class="contact-info"><i class="fa-solid fa-location-dot"></i> 452 Gourmet Blvd, Food District, New Delhi - 110001</p>
+                <p class="contact-info"><i class="fa-solid fa-phone"></i> +91 11 4567 8901</p>
+                <p class="contact-info"><i class="fa-solid fa-envelope"></i> reservations@tastehaven.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; {{ current_year }} Taste Haven. All rights reserved. Created for MCA Academic Project.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main Script -->
+    <script src="{% static 'restaurant/js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,42 @@
+{% extends 'restaurant/base.html' %}
+{% load static %}
+
+{% block title %}Taste Haven | Admin Settings{% endblock %}
+
+{% block content %}
+<section class="booking-section section-padding bg-darker" style="margin-top: 60px;">
+    <div class="container" style="max-width: 600px;">
+        
+        <div class="booking-form-box" style="background-color: var(--bg-card); border: 1px solid var(--color-border); border-radius: 12px; padding: 40px; box-shadow: var(--shadow-premium);">
+            
+            <h2 class="form-box-title" style="font-size: 2rem; color: #fff; margin-bottom: 5px;">Admin Settings</h2>
+            <p class="form-box-subtitle" style="color: var(--color-text-muted); margin-bottom: 30px;">Update your administrator access portal credentials securely.</p>
+            
+            <form method="POST" class="main-booking-form">
+                {% csrf_token %}
+                
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="form-label" for="username"><i class="fa-solid fa-user"></i> Admin Username</label>
+                    <input type="text" name="username" id="username" value="{{ username }}" class="form-control" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="form-label" for="password"><i class="fa-solid fa-lock"></i> New Password (Leave blank to keep current)</label>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="••••••••">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label class="form-label" for="confirm_password"><i class="fa-solid fa-check-double"></i> Confirm New Password</label>
+                    <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="••••••••">
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Credentials</button>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary" style="flex: 1; text-align: center; line-height: 2.2;">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

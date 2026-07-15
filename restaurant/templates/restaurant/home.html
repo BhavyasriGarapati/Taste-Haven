@@ -1,0 +1,234 @@
+{% extends 'restaurant/base.html' %}
+{% load static %}
+
+{% block title %}Taste Haven | Exquisite Culinary Experience{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <span class="hero-subtitle">WELCOME TO TASTE HAVEN</span>
+        <h1 class="hero-title">A Symphony of <br><span class="text-gold">Flavors</span> on Your Plate</h1>
+        <p class="hero-description">Experience dining redefined. Our master chefs prepare exquisite recipes using handpicked organic ingredients to craft memories that linger.</p>
+        <div class="hero-buttons">
+            <a href="{% url 'menu' %}" class="btn btn-primary">Explore Menu</a>
+            <a href="{% url 'book_table' %}" class="btn btn-secondary">Reserve a Table</a>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section section-padding">
+    <div class="container grid-two-cols">
+        <div class="about-img-container">
+            <div class="about-img-wrapper">
+                <!-- Using inline SVG vector placeholder for a beautiful, responsive, modern food silhouette / emblem -->
+                <svg viewBox="0 0 500 400" class="svg-vector-illustration" aria-label="Gourmet Dining Plate representation">
+                    <defs>
+                        <radialGradient id="gold-grad" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#E5C494" />
+                            <stop offset="100%" stop-color="#C5A880" />
+                        </radialGradient>
+                        <linearGradient id="charcoal-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#1E1E1E" />
+                            <stop offset="100%" stop-color="#2D2D2D" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#charcoal-grad)" rx="20"/>
+                    <circle cx="250" cy="200" r="130" fill="none" stroke="#C5A880" stroke-width="2" stroke-dasharray="8 4"/>
+                    <circle cx="250" cy="200" r="100" fill="#252525" stroke="#C5A880" stroke-width="4"/>
+                    <!-- Decorative Chef Cloche/Fork/Knife outline in gold -->
+                    <path d="M 220 220 L 220 180 M 235 220 L 235 180 M 250 220 L 250 180" stroke="url(#gold-grad)" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M 210 180 C 210 160 260 160 260 180" fill="none" stroke="url(#gold-grad)" stroke-width="4"/>
+                    <path d="M 280 170 L 280 230 M 270 180 L 290 180" stroke="url(#gold-grad)" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Tiny spark lines -->
+                    <line x1="250" y1="60" x2="250" y2="80" stroke="#C5A880" stroke-width="3"/>
+                    <line x1="110" y1="200" x2="130" y2="200" stroke="#C5A880" stroke-width="3"/>
+                    <line x1="370" y1="200" x2="390" y2="200" stroke="#C5A880" stroke-width="3"/>
+                </svg>
+            </div>
+            <div class="accent-badge">
+                <span class="badge-num">10+</span>
+                <span class="badge-text">Years of Excellence</span>
+            </div>
+        </div>
+        <div class="about-content">
+            <span class="section-subtitle">OUR STORY</span>
+            <h2 class="section-title">Where Taste Meets Elegance</h2>
+            <p class="section-desc">Founded with a passion for gastronomic innovation, Taste Haven brings together rich culinary heritages and contemporary techniques. We believe dining is not just about eating, but an immersive sensory journey.</p>
+            <p class="section-desc">Every dish is composed with precision, matching textures, temperatures, and profiles to excite the palate. From farm-to-table vegetables to organic meats and hand-selected spices, our focus is pure quality.</p>
+            <div class="chef-signature-box">
+                <div>
+                    <h4 class="chef-name">Chef Richard Vane</h4>
+                    <p class="chef-title">Co-Founder & Culinary Director</p>
+                </div>
+                <div class="signature">Richard Vane</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chef's Specials -->
+<section class="specials-section section-padding bg-darker">
+    <div class="container">
+        <div class="section-header text-center">
+            <span class="section-subtitle">SIGNATURE DISHES</span>
+            <h2 class="section-title">Chef's Weekly Specials</h2>
+            <div class="header-line"></div>
+        </div>
+        
+        <div class="specials-grid">
+            {% for item in specials %}
+            <div class="special-card">
+                <div class="special-img-box">
+                    <img src="{{ item.get_image_url }}" alt="{{ item.name }}" class="special-img">
+                    <span class="special-tag">Signature</span>
+                </div>
+                <div class="special-info">
+                    <div class="special-title-price">
+                        <h3 class="special-name">{{ item.name }}</h3>
+                        <span class="special-price">₹{{ item.price }}</span>
+                    </div>
+                    <p class="special-desc">{{ item.description }}</p>
+                    <a href="{% url 'menu' %}?category={{ item.category.slug }}" class="special-link-more">View in Menu <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Mock specials if db is not seeded yet -->
+            <div class="special-card">
+                <div class="special-img-box">
+                    <div class="special-img-placeholder">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <span class="special-tag">Signature</span>
+                </div>
+                <div class="special-info">
+                    <div class="special-title-price">
+                        <h3 class="special-name">Pan-Seared Truffle Salmon</h3>
+                        <span class="special-price">₹1,250</span>
+                    </div>
+                    <p class="special-desc">Fresh Atlantic Salmon seared in lemon-truffle butter, served with organic asparagus and saffron risotto.</p>
+                    <a href="{% url 'menu' %}" class="special-link-more">View in Menu <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="special-card">
+                <div class="special-img-box">
+                    <div class="special-img-placeholder">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <span class="special-tag">Chef Choice</span>
+                </div>
+                <div class="special-info">
+                    <div class="special-title-price">
+                        <h3 class="special-name">Charred Ribeye with Herb Crust</h3>
+                        <span class="special-price">₹1,650</span>
+                    </div>
+                    <p class="special-desc">Prime grass-fed beef ribeye with rosemary-garlic crust, slow charred and accompanied by wild mushroom jus.</p>
+                    <a href="{% url 'menu' %}" class="special-link-more">View in Menu <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="special-card">
+                <div class="special-img-box">
+                    <div class="special-img-placeholder">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <span class="special-tag">Popular</span>
+                </div>
+                <div class="special-info">
+                    <div class="special-title-price">
+                        <h3 class="special-name">Deconstructed Berry Mille-Feuille</h3>
+                        <span class="special-price">₹550</span>
+                    </div>
+                    <p class="special-desc">Crisp caramelized puff pastry layered with organic vanilla bean custard and fresh mountain berries.</p>
+                    <a href="{% url 'menu' %}" class="special-link-more">View in Menu <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials & Feedback -->
+<section class="testimonials-section section-padding">
+    <div class="container grid-two-cols">
+        <!-- Review submission -->
+        <div class="feedback-card">
+            <h3 class="feedback-title">Share Your Experience</h3>
+            <p class="feedback-subtitle">Your feedback helps us maintain our standard of excellence.</p>
+            <form action="{% url 'add_review' %}" method="POST" class="feedback-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label" for="id_name">Name</label>
+                    {{ review_form.name }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="id_rating">Rating</label>
+                    {{ review_form.rating }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="id_comment">Comments</label>
+                    {{ review_form.comment }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit Feedback</button>
+            </form>
+        </div>
+        
+        <!-- Live guest reviews -->
+        <div class="reviews-box">
+            <span class="section-subtitle">GUEST REVIEWS</span>
+            <h2 class="section-title">What Our Guests Say</h2>
+            <div class="reviews-container">
+                {% for review in reviews %}
+                <div class="review-item">
+                    <div class="review-header">
+                        <h4 class="reviewer-name">{{ review.name }}</h4>
+                        <div class="stars text-gold">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="fa-solid fa-star"></i>
+                                {% else %}
+                                    <i class="fa-regular fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="review-text">"{{ review.comment }}"</p>
+                    <span class="review-date">{{ review.created_at|date:"F d, Y" }}</span>
+                </div>
+                {% empty %}
+                <!-- Mock reviews for demonstration -->
+                <div class="review-item">
+                    <div class="review-header">
+                        <h4 class="reviewer-name">Aarav Sharma</h4>
+                        <div class="stars text-gold">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="review-text">"Hands down the best fine-dining restaurant in Delhi. The Pan-Seared Salmon was absolutely mouth-watering, and the warm service made us feel so special."</p>
+                    <span class="review-date">July 04, 2026</span>
+                </div>
+                <div class="review-item">
+                    <div class="review-header">
+                        <h4 class="reviewer-name">Elena Rostova</h4>
+                        <div class="stars text-gold">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-regular fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="review-text">"Beautiful atmospheric decor. Perfect for anniversary dates! Food tastes extremely premium. Highly recommend booking a table in advance."</p>
+                    <span class="review-date">June 28, 2026</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
